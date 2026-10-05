@@ -33,11 +33,9 @@ public class QuoteService {
 
     public Quote updateQuote(Long id, Quote quote) {
 
-        Quote existingQuote = quoteRepository.findById(id).orElse(null);
+        Quote existingQuote = quoteRepository.findById(id).orElseThrow(()->
+        new ResponseStatusException(HttpStatus.NOT_FOUND,"Quote not found"));
 
-        if (existingQuote == null) {
-            return null;
-        }
 
         existingQuote.setQuote(quote.getQuote());
         existingQuote.setAuthor(quote.getAuthor());
@@ -46,6 +44,9 @@ public class QuoteService {
     }
 
     public void deleteQuote(Long id) {
+        if(!quoteRepository.existsById(id)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Quote not found");
+        }
         quoteRepository.deleteById(id);
     }
 }
